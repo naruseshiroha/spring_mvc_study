@@ -25,13 +25,13 @@
     <!-- <mvc:annotation-driven /> -->
 
     <!-- 视图解析器 -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
-        <!-- 前缀 -->
+    <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
+        前缀
         <property name="prefix" value="/WEB-INF/jsp/" />
-        <!-- 后缀 -->
+        后缀
         <property name="suffix" value=".jsp" />
     </bean>
 
-    <bean id='/t1' class='jp.rena.controller.TestController1'/>
+    <bean id='/t1' class='jp.rena.controller.TestController1'/> -->
 
 </beans>
