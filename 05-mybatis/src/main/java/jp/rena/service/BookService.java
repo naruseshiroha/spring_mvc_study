@@ -2,8 +2,11 @@ package jp.rena.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jp.rena.entity.Book;
 
+@Transactional
 //BookService:底下需要去实现,调用dao层
 public interface BookService {
    //增加一个Book

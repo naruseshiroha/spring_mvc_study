@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import jp.rena.entity.Book;
 
-@Repository
+// @Repository
 public interface BookMapper {
     //增加一个Book
    int addBook(Book book);
