@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            table,
+            td {
+                border: 1px solid;
+                /* border-spacing: 0px; */
+            }
+        </style>
+    </head>
+    <body>
+        首页
+        <h2>所有书籍</h2>
+        <button>新增</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>书籍编号</th>
+                    <th>书籍名字</th>
+                    <th>书籍数量</th>
+                    <th>书籍详情</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <br /><br /><br /><br /><br />
+        <form action="#">
+            <input id="hidden" type="hidden" name="hidden" value="" />
+            书籍名字<input type="text" name="bookName" id="bookName" /><br />
+            书籍数量<input
+                type="text"
+                name="bookCounts"
+                id="bookCounts"
+            /><br />
+            书籍详情<input type="text" name="detail" id="detail" /><br />
+            <input id="addBtn" type="button" value="添加" onclick="addBook()" />
+            <input
+                id="saveBtn"
+                style="display: none"
+                type="button"
+                value="保存"
+                onclick="updateBook()"
+            />
+        </form>
+
+        <script>
+            let tbody = document.querySelector("tbody");
+
+            async function queryAll() {
+                let response = await fetch(
+                    "http://localhost:8080/mybatis05/books"
+                );
+                let books = await response.json();
+                let tbodyStr = books
+                    .map(
+                        (b) => `
+                    <tr>
+                        <td>${b.bookId}</td>
+                        <td>${b.bookName}</td>
+                        <td>${b.bookCounts}</td>
+                        <td>${b.detail}</td>
+                        <td><a href="#" onclick='handleUpdate(${JSON.stringify(
+                            b
+                        )})'>修改</a> <a href="#" onclick='deleteBook(${
+                            b.bookId
+                        },"${b.bookName}")'>删除</a></td>
+                    </tr>
+                    `
+                    )
+                    .join("");
+                tbody.innerHTML = tbodyStr;
+            }
+
+            queryAll();
+
+            let bookNameNode = document.querySelector('input[name="bookName"]');
+            let bookCountsNode = document.querySelector(
+                'input[name="bookCounts"]'
+            );
+            let detailNode = document.querySelector('input[name="detail"]');
+
+            async function addBook() {
+                let bookName = bookNameNode.value;
+                let bookCounts = bookCountsNode.value;
+                let detail = detailNode.value;
+
+                let data = { bookName, bookCounts, detail };
+
+                let response = await fetch(
+                    `http://localhost:8080/mybatis05/book`,
+                    {
+                        method: "put",
+                        // mode: "cors",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    }
+                );
+                let flag = await response.json();
+                console.log(flag);
+                if (flag) {
+                    bookNameNode.value = "";
+                    bookCountsNode.value = "";
+                    detailNode.value = "";
+                    queryAll();
+                } else {
+                    alert("添加失败！");
+                }
+            }
+
+            let addBtn = document.getElementById("addBtn");
+            let saveBtn = document.getElementById("saveBtn");
+
+            let hiddenNode = document.getElementById("hidden");
+            function handleUpdate(book) {
+                let { bookId, bookName, bookCounts, detail } = book;
+                hiddenNode.value = bookId;
+                bookNameNode.value = bookName;
+                bookCountsNode.value = bookCounts;
+                detailNode.value = detail;
+
+                // console.log(addBtn.style.display);
+                // console.log(saveBtn);
+                addBtn.style.display = "none";
+                saveBtn.style.display = "block";
+            }
+
+            async function updateBook() {
+                let bookId = hiddenNode.value;
+                let bookName = bookNameNode.value;
+                let bookCounts = bookCountsNode.value;
+                let detail = detailNode.value;
+
+                let data = { bookId, bookName, bookCounts, detail };
+
+                let response = await fetch(
+                    `http://localhost:8080/mybatis05/book/${bookId}`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    }
+                );
+                let flag = await response.json();
+                console.log(flag);
+                if (flag) {
+                    bookNameNode.value = "";
+                    bookCountsNode.value = "";
+                    detailNode.value = "";
+                    alert("修改成功！");
+                    queryAll();
+                } else {
+                    alert("修改失败！");
+                }
+            }
+
+            async function deleteBook(id, name) {
+                let confirm = window.confirm(`确认删除"${name}"这本书籍吗？`);
+                console.log(confirm);
+                if (confirm) {
+                    let response = await fetch(
+                        `http://localhost:8080/mybatis05/book/${id}`,
+                        {
+                            method: "DELETE",
+                            // mode: "cors",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+                    let flag = await response.json();
+                    console.log(flag);
+                    if (flag) {
+                        alert("删除成功！");
+                        queryAll();
+                    } else {
+                        alert("添加失败！");
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
