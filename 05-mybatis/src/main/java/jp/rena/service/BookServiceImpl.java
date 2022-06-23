@@ -36,10 +36,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> queryAllBook() {
-        System.out.println(bookMapper);
-        List<Book> bookList = bookMapper.queryAllBook();
-        return bookList;
-        // return bookMapper.queryAllBook();
+        return bookMapper.queryAllBook();
     }
 
 }
